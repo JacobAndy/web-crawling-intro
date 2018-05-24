@@ -5,7 +5,9 @@ function getClickCount(e, c) {
   if (e.getFullYear() > c.getFullYear()) {
     if (e.getMonth() < c.getMonth()) {
       return (
-        (e.getFullYear() - c.getFullYear()) * 12 - (c.getMonth() - e.getMonth())
+        (e.getFullYear() - c.getFullYear()) * 12 -
+        (c.getMonth() - e.getMonth()) -
+        1
       );
     } else if (e.getMonth() > c.getMonth()) {
       return (
@@ -19,21 +21,6 @@ function getClickCount(e, c) {
   }
 }
 
-function mapClickCountHotel(val) {
-  for (let i = 0; i < val; i++) {
-    page.click(
-      "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
-    );
-    return arr;
-  }
-}
-function getClickCountForExpedia(c, e, i) {
-  if (c.getMonth() === e.getMonth() || e.getMonth() - c.getMonth() === 1) {
-    return 0;
-  } else {
-    return e.getMonth() - c.getMonth() - 1 - i;
-  }
-}
 // function mapClickCountPlane(val){
 //   for(let i = 0; i< val,i++){
 
@@ -51,9 +38,7 @@ let scrapeHotel = async (
   startingmonth,
   endingmonth,
   starting,
-  ending,
-  xs,
-  xe
+  ending
 ) => {
   // const hotelDateClickerStart = mapClickCountHotel(starting);
   // const hotelDateClickerEnd = mapClickCountHotel(ending);
@@ -113,7 +98,7 @@ let scrapeHotel = async (
 
   await sleep(page, 60000);
   // await page.waitFor(6000);
-  for (let i = 0; i < xs; i++) {
+  for (let i = 0; i < ending - starting; i++) {
     await page.click(
       "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
     );
@@ -200,7 +185,7 @@ let scrapeHotel = async (
   await sleep(newpage, 60000);
   await newpage.click("#flight-returning-hp-flight");
   await sleep(newpage, 60000);
-  for (let i = 0; i < xs; i++) {
+  for (let i = 0; i < ending - starting; i++) {
     console.log(i);
     await newpage.click(".datepicker-next");
   }
@@ -243,12 +228,7 @@ const scrapem = (req, res) => {
   endingmonth = new Date(endingmonth);
   const starting = getClickCount(startingmonth, currDate);
   const ending = getClickCount(endingmonth, currDate);
-  const expediaStarting = getClickCountForExpedia(
-    currDate,
-    startingmonth,
-    starting
-  );
-  const expediaEnding = getClickCountForExpedia(currDate, endingmonth, ending);
+
   scrapeHotel(
     +startingweek,
     +startingday,
@@ -259,9 +239,7 @@ const scrapem = (req, res) => {
     startingmonth,
     endingmonth,
     +starting,
-    +ending,
-    +expediaStarting,
-    +expediaEnding
+    +ending
   );
 };
 
