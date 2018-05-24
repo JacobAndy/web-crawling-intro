@@ -18,17 +18,22 @@ function getClickCount(e, c) {
     return e.getMonth() - (c.getMonth() + 1);
   }
 }
-function clickCounter(val, count) {
-  for (let i = 0; i < count; i++) {
-    val;
+
+function mapClickCountHotel(val) {
+  for (let i = 0; i < val; i++) {
+    page.click(
+      "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
+    );
+    return arr;
   }
 }
-
-// function mapClickCountHotel(val){
-//   for(let i = 0; i< val,i++){
-
-//   }
-// };
+function getClickCountForExpedia(c, e, i) {
+  if (c.getMonth() === e.getMonth() || e.getMonth() - c.getMonth() === 1) {
+    return 0;
+  } else {
+    return e.getMonth() - c.getMonth() - 1 - i;
+  }
+}
 // function mapClickCountPlane(val){
 //   for(let i = 0; i< val,i++){
 
@@ -46,7 +51,9 @@ let scrapeHotel = async (
   startingmonth,
   endingmonth,
   starting,
-  ending
+  ending,
+  xs,
+  xe
 ) => {
   // const hotelDateClickerStart = mapClickCountHotel(starting);
   // const hotelDateClickerEnd = mapClickCountHotel(ending);
@@ -65,15 +72,20 @@ let scrapeHotel = async (
   await page.click(".widget-query-group .cta-strong", { clickCount: 1 });
   await page.waitForNavigation();
   await page.click("#widget-query-label-1");
-  // await sleep(page, 60000);
-  await page.waitFor(3000);
+  await sleep(page, 60000);
+  // await page.waitFor(3000);
 
-  await page.click(
-    "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next",
-    { clickCount: 15 }
-  );
-  // await sleep(page, 60000);
-  await page.waitFor(3000);
+  // await page.click(
+  //   "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
+  // );
+  for (let i = 0; i < starting; i++) {
+    console.log("aarons a champion" + " " + i);
+    await page.click(
+      "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
+    );
+  }
+  await sleep(page, 60000);
+  // await page.waitFor(3000);
   //body > div.widget-daterange.widget-daterange-start.widget-daterange-visible.widget-daterange-below > div.widget-daterange-cont > div:nth-child(2) > div.widget-datepicker-hd > button.widget-datepicker-next
   await page.click(
     //Next Month Arrow target =>  "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
@@ -95,23 +107,25 @@ let scrapeHotel = async (
     //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
     // body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(5) td:nth-child(5) a
   );
-  // await sleep(page, 60000);
-  await page.waitFor(3000);
+  await sleep(page, 60000);
+  // await page.waitFor(3000);
   await page.click("#widget-query-label-3");
 
-  // await sleep(page, 60000);
-  await page.waitFor(6000);
+  await sleep(page, 60000);
+  // await page.waitFor(6000);
+  for (let i = 0; i < xs; i++) {
+    await page.click(
+      "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
+    );
+  }
 
-  await page.click(
-    "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next",
-    { clickCount: 15 }
-  );
-  // await sleep(page, 60000);
-  await page.waitFor(3000);
+  await sleep(page, 60000);
+  // await page.waitFor(3000);
   //#package-returning-hp-package
   await page.click(
     //Previous Month Arrow class => .widget-datepicker-prev
     //Next Month Arrow class => .widget-datepicker-next
+    // `#package-returning-wrapper-hp-package .datepicker-dropdown .show-second-month div:nth-child(5) table tbody tr:nth-child(${endweek}) td:nth-child(${endday})`
     `body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(${endweek}) td:nth-child(${endday}) a`
     //Check out of June 28 Thursday
     //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK....
@@ -123,23 +137,23 @@ let scrapeHotel = async (
     //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK....
     //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(4) td:nth-child(5) a
   );
-  // await sleep(page, 60000);
-  // page.evaluate(_ => {
-  //   window.scrollBy(0, 100);
-  // });
-  // await sleep(page, 60000);
-  // await page.click("#q-room-0-adults");
-  // await page.waitFor(1000);
-  // await page.select("#q-room-0-adults", "1");
-  // await page.waitFor(500);
-  // await page.click("div.widget-query-group button.cta-strong", {
-  //   clickCount: 1
-  // });
-  // await sleep(page, 60000);
-  // const hotelpageUrl = page.url();
-  // const hotels = await page.evaluate(() =>
-  //   [...document.querySelectorAll(".hotel")].map(elem => elem.innerText)
-  // );
+  await sleep(page, 60000);
+  page.evaluate(_ => {
+    window.scrollBy(0, 100);
+  });
+  await sleep(page, 60000);
+  await page.click("#q-room-0-adults");
+  await page.waitFor(1000);
+  await page.select("#q-room-0-adults", "1");
+  await page.waitFor(500);
+  await page.click("div.widget-query-group button.cta-strong", {
+    clickCount: 1
+  });
+  await sleep(page, 60000);
+  const hotelpageUrl = page.url();
+  const hotels = await page.evaluate(() =>
+    [...document.querySelectorAll(".hotel")].map(elem => elem.innerText)
+  );
 
   // console.log(hotels);
   // console.log(hotelpageUrl);
@@ -157,51 +171,61 @@ let scrapeHotel = async (
   // ) => {
   //   const browser = await puppeteer.launch({ headless: false });
   //_____
-  // const newpage = await browser.newPage();
-  // await newpage.goto("https://www.expedia.com/");
-  // await sleep(newpage, 60000);
-  // await newpage.click("#tab-flight-tab-hp");
-  // await sleep(newpage, 60000);
-  // await newpage.type("#flight-origin-hp-flight", " " + origin, { delay: 5 });
-  // await newpage.waitFor(600);
-  // await newpage.click("#aria-option-0");
-  // await sleep(newpage, 60000);
-  // await newpage.type("#flight-destination-hp-flight", " " + destination, {
-  //   delay: 5
-  // });
-  // await newpage.waitFor(600);
-  // await newpage.click("#aria-option-0");
-  // await sleep(newpage, 60000);
-  // await newpage.click("#flight-departing-hp-flight");
-  // await sleep(newpage, 60000);
-  // //#flight-departing-wrapper-hp-flight > div > div > button.datepicker-paging.datepicker-next.btn-paging.btn-secondary.next
-  // await newpage.click(
-  //   `#flight-departing-wrapper-hp-flight > div > div > div:nth-child(5) > table > tbody > tr:nth-child(${startweek}) > td:nth-child(${startday}) > button`
-  // );
-  // await sleep(newpage, 60000);
-  // await newpage.click("#flight-returning-hp-flight");
-  // await sleep(newpage, 60000);
-  // await newpage.click(
-  //   `#flight-returning-wrapper-hp-flight > div > div > div:nth-child(5) > table > tbody > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
-  // );
-  // await sleep(newpage, 60000);
-  // await newpage.click(
-  //   "#gcw-flights-form-hp-flight > div.cols-nested.ab25184-submit > label > button"
-  // );
-  // await sleep(newpage, 60000);
-  // const flightpageUrl = newpage.url();
-  // const flight = await newpage.evaluate(() =>
-  //   [...document.querySelectorAll(".visuallyhidden")].map(
-  //     elem => elem.innerText
-  //   )
-  // );
-  // console.log(hotels);
-  // console.log(hotelpageUrl);
-  // console.log(flight);
-  // console.log(flightpageUrl);
+  const newpage = await browser.newPage();
+  await newpage.goto("https://www.expedia.com/");
+  await sleep(newpage, 60000);
+  await newpage.click("#tab-flight-tab-hp");
+  await sleep(newpage, 60000);
+  await newpage.type("#flight-origin-hp-flight", " " + origin, { delay: 5 });
+  await newpage.waitFor(600);
+  await newpage.click("#aria-option-0");
+  await sleep(newpage, 60000);
+  await newpage.type("#flight-destination-hp-flight", " " + destination, {
+    delay: 5
+  });
+  await newpage.waitFor(600);
+  await newpage.click("#aria-option-0");
+  await sleep(newpage, 60000);
+  await newpage.click("#flight-departing-hp-flight");
+  await sleep(newpage, 60000);
+  for (let i = 0; i < starting + 1; i++) {
+    await newpage.click(".datepicker-next");
+  }
+  await sleep(newpage, 60000);
+
+  await newpage.click(
+    `.datepicker-cal-dates > tr:nth-child(${startweek}) > td:nth-child(${startday}) > button`
+    //#package-departing-wrapper-hp-package > div > div > div:nth-child(5) > table > tbody > tr:nth-child(1) > td:nth-child(6) > button
+  );
+  await sleep(newpage, 60000);
+  await newpage.click("#flight-returning-hp-flight");
+  await sleep(newpage, 60000);
+  for (let i = 0; i < xs; i++) {
+    console.log(i);
+    await newpage.click(".datepicker-next");
+  }
+  await sleep(newpage, 60000);
+  await newpage.click(
+    `#flight-returning-wrapper-hp-flight > div > div > div:nth-child(4) > table > tbody > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
+    // `#package-returning-wrapper-hp-package .datepicker-dropdown .show-second-month div:nth-child(5) table tbody tr:nth-child(${endweek}) td:nth-child(${endday})`
+  );
+  await sleep(newpage, 60000);
+  await newpage.click(
+    "#gcw-flights-form-hp-flight > div.cols-nested.ab25184-submit > label > button"
+  );
+  await sleep(newpage, 60000);
+  const flightpageUrl = newpage.url();
+  const flight = await newpage.evaluate(() =>
+    [...document.querySelectorAll(".visuallyhidden")].map(
+      elem => elem.innerText
+    )
+  );
+  console.log(hotels);
+  console.log(hotelpageUrl);
+  console.log(flight);
+  console.log(flightpageUrl);
   // browser.close();
 };
-// scrape();
 
 const scrapem = (req, res) => {
   let {
@@ -214,13 +238,17 @@ const scrapem = (req, res) => {
     startingmonth,
     endingmonth
   } = req.query;
-  console.log(startingmonth, endingmonth);
   const currDate = new Date();
   startingmonth = new Date(startingmonth);
   endingmonth = new Date(endingmonth);
   const starting = getClickCount(startingmonth, currDate);
   const ending = getClickCount(endingmonth, currDate);
-  console.log(starting, ending);
+  const expediaStarting = getClickCountForExpedia(
+    currDate,
+    startingmonth,
+    starting
+  );
+  const expediaEnding = getClickCountForExpedia(currDate, endingmonth, ending);
   scrapeHotel(
     +startingweek,
     +startingday,
@@ -231,7 +259,9 @@ const scrapem = (req, res) => {
     startingmonth,
     endingmonth,
     +starting,
-    +ending
+    +ending,
+    +expediaStarting,
+    +expediaEnding
   );
 };
 
