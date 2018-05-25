@@ -44,6 +44,7 @@ let scrapeHotel = async (
   starting,
   ending
 ) => {
+  console.log("hello");
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto("https://www.hotels.com/");
@@ -54,7 +55,7 @@ let scrapeHotel = async (
   await page.click(".autosuggest-city #citysqm-asi0-s0");
   await sleep(page, 60000);
   await page.click(".widget-query-group .cta-strong", { clickCount: 1 });
-  await page.click(".widget-query-group .cta-strong", { clickCount: 1 });
+  // await page.click(".widget-query-group .cta-strong", { clickCount: 1 });
   await page.waitForNavigation();
   await page.click("#widget-query-label-1");
   await sleep(page, 60000);
