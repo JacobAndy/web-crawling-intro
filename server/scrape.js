@@ -1,8 +1,11 @@
 const puppeteer = require("puppeteer");
 const sleep = require("./utils");
-
+let sameMonth = false;
+let expediaGetMonth = false;
 function getClickCount(e, c) {
   if (e.getFullYear() > c.getFullYear()) {
+    sameMonth = false;
+    expediaGetMonth = false;
     if (e.getMonth() < c.getMonth()) {
       return (
         (e.getFullYear() - c.getFullYear()) * 12 -
@@ -17,15 +20,16 @@ function getClickCount(e, c) {
       return (e.getFullYear() - c.getFullYear()) * 12;
     }
   } else if (e.getMonth() > c.getMonth() + 1) {
+    sameMonth = false;
+    expediaGetMonth = false;
     return e.getMonth() - (c.getMonth() + 1);
+  } else if (e.getMonth() === c.getMonth()) {
+    sameMonth = true;
+    expediaGetMonth = false;
+  } else if (e.getMonth() === c.getMonth() + 1) {
+    expediaGetMonth = true;
   }
 }
-
-// function mapClickCountPlane(val){
-//   for(let i = 0; i< val,i++){
-
-//   }
-// };
 
 //******************************HOTELS.COM WEB SCRAPER***************************** */
 let scrapeHotel = async (
@@ -40,10 +44,6 @@ let scrapeHotel = async (
   starting,
   ending
 ) => {
-  // const hotelDateClickerStart = mapClickCountHotel(starting);
-  // const hotelDateClickerEnd = mapClickCountHotel(ending);
-  // const planeDateClickStart = mapClickCountPlane(starting);
-  // const planeDateClickEnd = mapClickCountPlane(ending);
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.goto("https://www.hotels.com/");
@@ -58,11 +58,6 @@ let scrapeHotel = async (
   await page.waitForNavigation();
   await page.click("#widget-query-label-1");
   await sleep(page, 60000);
-  // await page.waitFor(3000);
-
-  // await page.click(
-  //   "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
-  // );
   for (let i = 0; i < starting; i++) {
     console.log("aarons a champion" + " " + i);
     await page.click(
@@ -70,34 +65,15 @@ let scrapeHotel = async (
     );
   }
   await sleep(page, 60000);
-  // await page.waitFor(3000);
-  //body > div.widget-daterange.widget-daterange-start.widget-daterange-visible.widget-daterange-below > div.widget-daterange-cont > div:nth-child(2) > div.widget-datepicker-hd > button.widget-datepicker-next
   await page.click(
-    //Next Month Arrow target =>  "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
-
-    `body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-bd table tbody tr:nth-child(${startweek}) td:nth-child(${startday}) a`
-    //Check in of June  1
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
-    // body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(1) td:nth-child(6) a
-    //Check in of June 7
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
-    //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(2) td:nth-child(5) a
-    //Check in of June 14
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
-    //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(3) td:nth-child(5) a
-    //Check in of June 21
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
-    //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(4) td:nth-child(5) a
-    //Check in of June 28
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK
-    // body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(5) td:nth-child(5) a
+    sameMonth
+      ? `body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(${startweek}) td:nth-child(${startday}) a`
+      : `body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-bd table tbody tr:nth-child(${startweek}) td:nth-child(${startday}) a`
   );
   await sleep(page, 60000);
-  // await page.waitFor(3000);
   await page.click("#widget-query-label-3");
 
   await sleep(page, 60000);
-  // await page.waitFor(6000);
   for (let i = 0; i < ending - starting; i++) {
     await page.click(
       "body div.widget-daterange div.widget-daterange-cont div:nth-child(2) div.widget-datepicker-hd button.widget-datepicker-next"
@@ -105,22 +81,8 @@ let scrapeHotel = async (
   }
 
   await sleep(page, 60000);
-  // await page.waitFor(3000);
-  //#package-returning-hp-package
   await page.click(
-    //Previous Month Arrow class => .widget-datepicker-prev
-    //Next Month Arrow class => .widget-datepicker-next
-    // `#package-returning-wrapper-hp-package .datepicker-dropdown .show-second-month div:nth-child(5) table tbody tr:nth-child(${endweek}) td:nth-child(${endday})`
     `body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(${endweek}) td:nth-child(${endday}) a`
-    //Check out of June 28 Thursday
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK....
-    // "body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(5) td:nth-child(5) a"
-    //Check out of June 21 Thursday
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK....
-    //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(4) td:nth-child(5) a
-    //Check out of August 23 Thursday
-    //........................................................................................................WEEK OF THE MONTH...DAY OF WEEK....
-    //body div.widget-daterange div.widget-daterange-cont div:nth-child(1) div.widget-datepicker-bd table tbody tr:nth-child(4) td:nth-child(5) a
   );
   await sleep(page, 60000);
   page.evaluate(_ => {
@@ -179,7 +141,10 @@ let scrapeHotel = async (
   await sleep(newpage, 60000);
 
   await newpage.click(
-    `.datepicker-cal-dates > tr:nth-child(${startweek}) > td:nth-child(${startday}) > button`
+    // datepicker-cal-month
+    !expediaGetMonth
+      ? `div:nth-child(4) .datepicker-cal-dates > tr:nth-child(${startweek}) > td:nth-child(${startday}) > button`
+      : `div:nth-child(5) .datepicker-cal-dates > tr:nth-child(${startweek}) > td:nth-child(${startday}) > button`
     //#package-departing-wrapper-hp-package > div > div > div:nth-child(5) > table > tbody > tr:nth-child(1) > td:nth-child(6) > button
   );
   await sleep(newpage, 60000);
@@ -191,24 +156,27 @@ let scrapeHotel = async (
   }
   await sleep(newpage, 60000);
   await newpage.click(
-    `#flight-returning-wrapper-hp-flight > div > div > div:nth-child(4) > table > tbody > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
+    !expediaGetMonth
+      ? `div:nth-child(4) .datepicker-cal-dates > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
+      : `div:nth-child(5) .datepicker-cal-dates > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
+    // `#flight-returning-wrapper-hp-flight > div > div > div:nth-child(4) > table > tbody > tr:nth-child(${endweek}) > td:nth-child(${endday}) > button`
     // `#package-returning-wrapper-hp-package .datepicker-dropdown .show-second-month div:nth-child(5) table tbody tr:nth-child(${endweek}) td:nth-child(${endday})`
   );
-  await sleep(newpage, 60000);
-  await newpage.click(
-    "#gcw-flights-form-hp-flight > div.cols-nested.ab25184-submit > label > button"
-  );
-  await sleep(newpage, 60000);
-  const flightpageUrl = newpage.url();
-  const flight = await newpage.evaluate(() =>
-    [...document.querySelectorAll(".visuallyhidden")].map(
-      elem => elem.innerText
-    )
-  );
-  console.log(hotels);
-  console.log(hotelpageUrl);
-  console.log(flight);
-  console.log(flightpageUrl);
+  // await sleep(newpage, 60000);
+  // await newpage.click(
+  //   "#gcw-flights-form-hp-flight > div.cols-nested.ab25184-submit > label > button"
+  // );
+  // await sleep(newpage, 60000);
+  // const flightpageUrl = newpage.url();
+  // const flight = await newpage.evaluate(() =>
+  //   [...document.querySelectorAll(".visuallyhidden")].map(
+  //     elem => elem.innerText
+  // )
+  // );
+  // console.log(hotels);
+  // console.log(hotelpageUrl);
+  // console.log(flight);
+  // console.log(flightpageUrl);
   // browser.close();
 };
 
